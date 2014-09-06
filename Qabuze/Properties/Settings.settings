@@ -1,0 +1,27 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Qabuze.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="AppId" Type="System.String" Scope="User">
+      <Value Profile="(Default)">214748364</Value>
+    </Setting>
+    <Setting Name="AppSecret" Type="System.String" Scope="User">
+      <Value Profile="(Default)">6fdcbccb7a073f35fbd16a193cdef6c4</Value>
+    </Setting>
+    <Setting Name="UserAuthToken" Type="System.String" Scope="User">
+      <Value Profile="(Default)">enter 'qbPlayer.globalManager.user.auth_token' in WebPlayer Console (F12)</Value>
+    </Setting>
+    <Setting Name="baseURL" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://www.qobuz.com/api.json/0.2/</Value>
+    </Setting>
+    <Setting Name="filenames" Type="System.String" Scope="User">
+      <Value Profile="(Default)">%disknumber% - %tracknumber% - %title% - %album% - %artist%.%ext%</Value>
+    </Setting>
+    <Setting Name="folderStructure" Type="System.String" Scope="User">
+      <Value Profile="(Default)">%artist%\\%album%</Value>
+    </Setting>
+    <Setting Name="outputFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+  </Settings>
+</SettingsFile>
