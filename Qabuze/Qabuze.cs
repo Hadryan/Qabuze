@@ -268,56 +268,62 @@ namespace Qabuze
         }
 
         public string getDownloadLink(bool lossless) {
-
-            List<KeyValuePair<string,string>> data = new List<KeyValuePair<string,string>>();
-            
-            data.Add(new KeyValuePair <string,string> ("format_id", (lossless ? "6":"5")));
-            data.Add(new KeyValuePair <string,string> ("intent", "stream"));
-            data.Add(new KeyValuePair <string,string> ("track_id", this.track_id));
-            
-            string response = (new WebClient()).DownloadString(QabuzeAPI.instance.BuildRequest("track/getFileUrl", data));
-            JObject obj = JObject.Parse(response);
-
-            int format_id = 0, isSample = 2;
-            List<string> restrictions = new List<string>();
-
             try
             {
-                format_id = ((int)obj["format_id"]);
+                List<KeyValuePair<string, string>> data = new List<KeyValuePair<string, string>>();
 
-            }
-            catch (Exception) { }
-            try
-            {
-                isSample = ((bool)obj["sample"]) ? 1 : 0;
+                data.Add(new KeyValuePair<string, string>("format_id", (lossless ? "6" : "5")));
+                data.Add(new KeyValuePair<string, string>("intent", "stream"));
+                data.Add(new KeyValuePair<string, string>("track_id", this.track_id));
 
-            }
-            catch (Exception) { }
-            try
-            {
-                for (int i = 0; i < 10; i++)
+                string response = (new WebClient()).DownloadString(QabuzeAPI.instance.BuildRequest("track/getFileUrl", data));
+                JObject obj = JObject.Parse(response);
+
+                int format_id = 0, isSample = 2;
+                List<string> restrictions = new List<string>();
+
+                try
                 {
-                    restrictions.Add((string)obj["restrictions"][i]["code"]);
+                    format_id = ((int)obj["format_id"]);
+
                 }
-
-            }
-            catch (Exception) { }
-
-            if (format_id != 6 || isSample == 1)
-            {
-
-                Console.WriteLine("Track #" + track_id + " not to be downloaded because:");
-                foreach (string code in restrictions)
+                catch (Exception) { }
+                try
                 {
-                    Console.WriteLine(code);
-                }
-                Console.WriteLine("The format is " + ((format_id != 6) ? "NOT" : "") + " FLAC");
-                Console.WriteLine((isSample == 1) ? "The file is a sample" : "The file is (probaly) not a sample");
+                    isSample = ((bool)obj["sample"]) ? 1 : 0;
 
+                }
+                catch (Exception) { }
+                try
+                {
+                    for (int i = 0; i < 10; i++)
+                    {
+                        restrictions.Add((string)obj["restrictions"][i]["code"]);
+                    }
+
+                }
+                catch (Exception) { }
+
+                if (format_id != 6 || isSample == 1)
+                {
+
+                    Console.WriteLine("Track #" + track_id + " not to be downloaded because:");
+                    foreach (string code in restrictions)
+                    {
+                        Console.WriteLine(code);
+                    }
+                    Console.WriteLine("The format is " + ((format_id != 6) ? "NOT" : "") + " FLAC");
+                    Console.WriteLine((isSample == 1) ? "The file is a sample" : "The file is (probaly) not a sample");
+
+                    return null;
+                }
+                else
+                {
+                    return (string)obj["url"];
+                }
+            }
+            catch (Exception) {
                 return null;
-            }
-            else { 
-                return (string) obj["url"];
             }
         }
 

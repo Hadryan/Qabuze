@@ -65,19 +65,22 @@ namespace Qabuze
 
         public void updateView(IDictionary<int, QabuzeDLMThreadStatus> status)
         {
-            while (updating) {
-                Thread.Sleep(1);
-            }
-            updating = true;
-            lock (QabuzeDLM.status)
+            try
             {
-
-                listView1.Items.Clear();
-
-                foreach (KeyValuePair<int, QabuzeDLMThreadStatus> current in QabuzeDLM.status)
+                while (updating)
+                {
+                    Thread.Sleep(1);
+                }
+                updating = true;
+                lock (QabuzeDLM.status)
                 {
 
-                listView1.Items.Add(new ListViewItem(new [] {
+                    listView1.Items.Clear();
+
+                    foreach (KeyValuePair<int, QabuzeDLMThreadStatus> current in QabuzeDLM.status)
+                    {
+
+                        listView1.Items.Add(new ListViewItem(new[] {
                     current.Key.ToString(),
                     current.Value.percentage.ToString(),
                     current.Value.getStatusAsDLMEvent().ToString(),
@@ -90,11 +93,12 @@ namespace Qabuze
                     current.Value.album.artist
                 }));
 
-            } 
+                    }
 
+                }
+                updating = false;
             }
-            updating = false;
-            
+            catch (Exception) {}
         }
 
         public void updateThreadSafe(IDictionary<int, QabuzeDLMThreadStatus> status)
@@ -102,6 +106,11 @@ namespace Qabuze
 
             ThreadPool.QueueUserWorkItem(o => this.updateView(status));
 
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            QabuzeDLM.clear();
         }
     }
 }

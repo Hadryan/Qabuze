@@ -82,6 +82,16 @@ namespace Qabuze
             return p;
 
         }
+
+        internal static string truncateIfNecessary(string p)
+        {
+            if ((Properties.Settings.Default.outputFolder.Length + p.Length) >= 245)
+            {
+                p = p.Substring(0, (245 - Properties.Settings.Default.outputFolder.Length)) + ".flac";
+            }
+
+            return p;
+        }
         internal static string escapeMetaString(string p, QabuzeAlbum album, QabuzeSong song)
         {
 
@@ -97,6 +107,14 @@ namespace Qabuze
             p = @p.Replace("*", "");
             p = @p.Replace("|", "");
             p = @p.Replace("?", "");
+            p = @p.Replace("[", "");
+            p = @p.Replace("]", "");
+            p = @p.Replace("\"", "");
+
+            if ((Properties.Settings.Default.outputFolder.Length + p.Length) >= 245)
+            {
+                p = p.Substring(0, (245 - Properties.Settings.Default.outputFolder.Length)) + ".flac";
+            }
 
             return p;
 

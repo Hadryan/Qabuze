@@ -22,7 +22,26 @@ namespace Qabuze
             done,
             taggingFailed,
             downloadFailed,
+            failed,
             other
+        }
+
+        public static void clear() {
+            List<int> itemsToRemove = new List<int>();
+            foreach (KeyValuePair<int, QabuzeDLMThreadStatus> current in status)
+            {
+                if (current.Value.getStatusAsDLMEvent() == QabuzeDLM.DLMEvent.done
+                    || current.Value.getStatusAsDLMEvent() == QabuzeDLM.DLMEvent.failed)
+                {
+                    itemsToRemove.Add(current.Key);
+                }
+            }
+            foreach (int current in itemsToRemove)
+            {
+                status.Remove(current);
+            }
+            updateProgressBar();
+            frmDLStat.instance.updateThreadSafe(status);
         }
 
         private static QabuzeDLMThreadStatus getStatusByThread(int thread) {
@@ -99,7 +118,13 @@ namespace Qabuze
             if (song == 0) {
                 tmp.updateThreadStatus(dlmevent, logEntry);
                 if (dlmevent == DLMEvent.done) {
-                    string threadDoneEntry = "Total songs: " + tmp.amtSongs.ToString() + " Loaded: " + tmp.songsLoaded.ToString() + " Tagged: " + tmp.songsTagged.ToString() + " Done: " + tmp.songsDone.ToString();
+                    string threadDoneEntry = "Total songs: " + tmp.amtSongs.ToString() + " Loaded: " + tmp.songsLoaded.ToString() + " Tagged: " + tmp.songsTagged.ToString() + " Done: " + tmp.songsDone.ToString() + " Failed: " + tmp.songsFailed.ToString();
+                    logs.Add(prefix + threadDoneEntry);
+                    Console.WriteLine(prefix + threadDoneEntry);
+                    tmp.log.Add(threadDoneEntry);
+                }
+                else if (dlmevent == DLMEvent.failed) {
+                    string threadDoneEntry = "Total songs: " + tmp.amtSongs.ToString() + " Loaded: " + tmp.songsLoaded.ToString() + " Tagged: " + tmp.songsTagged.ToString() + " Done: " + tmp.songsDone.ToString() + " Failed: " + tmp.songsFailed.ToString();
                     logs.Add(prefix + threadDoneEntry);
                     Console.WriteLine(prefix + threadDoneEntry);
                     tmp.log.Add(threadDoneEntry);
@@ -147,7 +172,7 @@ namespace Qabuze
             {
                 kvp_song = album.songs[i];
 
-                string foldername = Properties.Settings.Default.outputFolder + "\\" + @Utils.escapeMetaString(@Properties.Settings.Default.folderStructure, album, kvp_song.Value);
+                string foldername = (Properties.Settings.Default.outputFolder + "\\" + @Utils.escapeMetaString(@Properties.Settings.Default.folderStructure, album, kvp_song.Value));
                 System.IO.Directory.CreateDirectory(foldername);
                 if (!System.IO.File.Exists(foldername + "\\folder.jpg"))
                 {
@@ -155,7 +180,7 @@ namespace Qabuze
                     pushStatus(currentThread, DLMEvent.working, "Downloaded Cover!");
                 } //kvp_song.Value.track_id, kvp_song.Value.getDownloadLink(Properties.Settings.Default.lossless))
                     string filename = Utils.escapeMetaString(Properties.Settings.Default.filenames, album, kvp_song.Value).Replace("\\", "") ;
-                    string fullFilename = foldername + "\\" + @filename;
+                    string fullFilename = Utils.truncateIfNecessary(foldername + "\\" + @filename);
                     pushStatus(currentThread, DLMEvent.working, "Now downloading \"" + filename + "\" ...", i + 1);
 
                     string url = kvp_song.Value.getDownloadLink(true);
@@ -215,12 +240,13 @@ namespace Qabuze
                         }
                         Console.Write(buffer);
                         pushStatus(currentThread, DLMEvent.working, "Exitcode of metaflac: " + proc.ExitCode.ToString());
-                        amtRetries += 999;
+                        amtRetries++;
                         mayContinue = (proc.ExitCode != 0 && amtRetries < 5);
                         }
                         catch (Exception)
                         {
                             pushStatus(currentThread, DLMEvent.taggingFailed, "Tagging \"" + filename + "\" FAILED!", i + 1);
+                            mayContinue = false;
                         }
 
                     } while (mayContinue);
@@ -244,8 +270,15 @@ namespace Qabuze
                     //pb.Increment(1);
 
             }
-
-            pushStatus(currentThread, DLMEvent.done, "done!");
+            QabuzeDLMThreadStatus _ct = getStatusByThread(currentThread);
+            if (_ct.songsFailed > 0)
+            {
+                pushStatus(currentThread, DLMEvent.failed, "failure!");
+            }
+            else
+            {
+                pushStatus(currentThread, DLMEvent.done, "done!");
+            }
             activeThreads--;
             finishedThreads++;
             #endif
@@ -260,7 +293,7 @@ namespace Qabuze
 
     public class QabuzeDLMThreadStatus {
 
-        public bool threadDone = false, threadWorking = false, threadWaiting = false;
+        public bool threadDone = false, threadFailed = false, threadWorking = false, threadWaiting = false;
         public List<string> log = new List<string>();
         public int thread, amtSongs = 0, songsLoaded = 0, songsTagged = 0, songsDone = 0, percentage = 0, songsFailed = 0;
         public QabuzeAlbum album = new QabuzeAlbum();
@@ -285,9 +318,10 @@ namespace Qabuze
         public void updateThreadStatus(QabuzeDLM.DLMEvent dlmevent, string log = "") {
             switch (dlmevent)
             {
-                case QabuzeDLM.DLMEvent.working:    threadWorking = true; threadDone = false; threadWaiting = false; break;
-                case QabuzeDLM.DLMEvent.done:       threadWorking = false; threadDone = true; threadWaiting = false; break;
-                case QabuzeDLM.DLMEvent.waiting:    threadWorking = false; threadDone = false; threadWaiting = true; break;
+                case QabuzeDLM.DLMEvent.working:    threadWorking = true; threadDone = false; threadWaiting = false; threadFailed = false; break;
+                case QabuzeDLM.DLMEvent.done:       threadWorking = false; threadDone = true; threadWaiting = false; threadFailed = false; break;
+                case QabuzeDLM.DLMEvent.waiting:    threadWorking = false; threadDone = false; threadWaiting = true; threadFailed = false; break;
+                case QabuzeDLM.DLMEvent.failed:     threadWorking = false; threadDone = true; threadWaiting = false; threadFailed = true; break;
                 default:                            break;
             }
 
@@ -296,6 +330,9 @@ namespace Qabuze
 
         public QabuzeDLM.DLMEvent getStatusAsDLMEvent()
         {
+            if (threadFailed) {
+                return QabuzeDLM.DLMEvent.failed;
+            }
             if (threadWorking == true && threadDone == false && threadWaiting == false)
             {
                 return QabuzeDLM.DLMEvent.working;
