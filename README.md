@@ -1,4 +1,4 @@
-**Qabuze**
+**Qabuze** [![Build status](https://ci.appveyor.com/api/projects/status/hmkn8xkhfjydnp96/branch/master)](https://ci.appveyor.com/project/butterkekstorte/qabuze/branch/master)
 ======
 
 A simple Data-gatherer using the Qobuz-API.
