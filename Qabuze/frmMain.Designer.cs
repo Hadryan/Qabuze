@@ -57,6 +57,7 @@
             this.lblAvailability = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.lblVer = new System.Windows.Forms.Label();
+            this.button3 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pbArtist)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbArtwork)).BeginInit();
             this.SuspendLayout();
@@ -227,7 +228,7 @@
             this.txtArtist_Bio.Name = "txtArtist_Bio";
             this.txtArtist_Bio.ReadOnly = true;
             this.txtArtist_Bio.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtArtist_Bio.Size = new System.Drawing.Size(383, 178);
+            this.txtArtist_Bio.Size = new System.Drawing.Size(403, 178);
             this.txtArtist_Bio.TabIndex = 19;
             // 
             // progressBar1
@@ -268,7 +269,7 @@
             this.button2.Enabled = false;
             this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button2.ImageKey = "(none)";
-            this.button2.Location = new System.Drawing.Point(425, 45);
+            this.button2.Location = new System.Drawing.Point(445, 44);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(128, 128);
             this.button2.TabIndex = 5;
@@ -349,11 +350,22 @@
             this.lblVer.Text = "v0.0.0";
             this.lblVer.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(517, 369);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(56, 23);
+            this.button3.TabIndex = 1002;
+            this.button3.Text = "License";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(585, 418);
+            this.Controls.Add(this.button3);
             this.Controls.Add(this.lblVer);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.txtSearch);
@@ -424,6 +436,7 @@
         private System.Windows.Forms.Label lblAvailability;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label lblVer;
+        private System.Windows.Forms.Button button3;
     }
 }
 

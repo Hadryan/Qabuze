@@ -69,5 +69,18 @@ namespace Qabuze.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to *LICENSE*
+        ///===
+        ///
+        ///This work is currently not licensed, however this only entitles you to clone this software for your own use. Forks and modifications are not allowed as of now. I will decide on a license in the following days.
+        ///.
+        /// </summary>
+        internal static string LICENSE {
+            get {
+                return ResourceManager.GetString("LICENSE", resourceCulture);
+            }
+        }
     }
 }

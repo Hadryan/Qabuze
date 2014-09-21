@@ -18,21 +18,33 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Reflection;
+using System.IO;
 
 namespace Qabuze
 {
-    static class Program
+    public partial class frmLicense : Form
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
+        public frmLicense()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmMain());
+            InitializeComponent();
+        }
+
+        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void frmLicense_Load(object sender, EventArgs e)
+        {
+            this.webBrowser1.DocumentText = "<style>\n*{\nfont-family: \"Verdana\", Verdana, sans-serif;\n}\n</style>" + (new MarkdownSharp.Markdown()).Transform((string) Qabuze.Properties.Resources.LICENSE);
         }
     }
 }

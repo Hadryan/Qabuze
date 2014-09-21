@@ -70,6 +70,9 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>5c19590bba872d47.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -89,6 +92,12 @@
     </Compile>
     <Compile Include="frmDLStat.Designer.cs">
       <DependentUpon>frmDLStat.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmLicense.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmLicense.Designer.cs">
+      <DependentUpon>frmLicense.cs</DependentUpon>
     </Compile>
     <Compile Include="frmSearch.cs">
       <SubType>Form</SubType>
@@ -121,6 +130,9 @@
     <EmbeddedResource Include="frmDLStat.resx">
       <DependentUpon>frmDLStat.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="frmLicense.resx">
+      <DependentUpon>frmLicense.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>
     </EmbeddedResource>
@@ -147,6 +159,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings1.Designer.cs</LastGenOutput>
     </None>
+    <None Include="..\LICENSE.md" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
@@ -167,6 +180,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Download.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="5c19590bba872d47.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MarkdownSharp\MarkdownSharp.csproj">
+      <Project>{37619116-cce8-465a-8b1f-081ca53364bb}</Project>
+      <Name>MarkdownSharp</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
