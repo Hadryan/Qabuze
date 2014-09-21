@@ -18,7 +18,7 @@
       <Value Profile="(Default)">%disknumber% - %tracknumber% - %title% - %album% - %artist%.%ext%</Value>
     </Setting>
     <Setting Name="folderStructure" Type="System.String" Scope="User">
-      <Value Profile="(Default)">%artist%\\%album%</Value>
+      <Value Profile="(Default)">%ALBUMARTIST%\%album%</Value>
     </Setting>
     <Setting Name="outputFolder" Type="System.String" Scope="User">
       <Value Profile="(Default)" />

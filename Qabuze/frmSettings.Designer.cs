@@ -137,7 +137,7 @@
             this.txtFolderStructure.Name = "txtFolderStructure";
             this.txtFolderStructure.Size = new System.Drawing.Size(331, 20);
             this.txtFolderStructure.TabIndex = 11;
-            this.txtFolderStructure.Text = "%artist%/%album%/";
+            this.txtFolderStructure.Text = "%albumartist%\\%album%/";
             // 
             // label1
             // 

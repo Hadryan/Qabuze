@@ -85,7 +85,7 @@ namespace Qabuze.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("%artist%\\\\%album%")]
+        [global::System.Configuration.DefaultSettingValueAttribute("%ALBUMARTIST%\\%album%")]
         public string folderStructure {
             get {
                 return ((string)(this["folderStructure"]));

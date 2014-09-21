@@ -56,6 +56,7 @@
             this.label8 = new System.Windows.Forms.Label();
             this.lblAvailability = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
+            this.lblVer = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pbArtist)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbArtwork)).BeginInit();
             this.SuspendLayout();
@@ -337,11 +338,23 @@
             this.label9.TabIndex = 1000;
             this.label9.Text = "This application uses the Qobuz API, but is not certified by Qobuz.";
             // 
+            // lblVer
+            // 
+            this.lblVer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblVer.AutoSize = true;
+            this.lblVer.Location = new System.Drawing.Point(10, 365);
+            this.lblVer.Name = "lblVer";
+            this.lblVer.Size = new System.Drawing.Size(37, 13);
+            this.lblVer.TabIndex = 1001;
+            this.lblVer.Text = "v0.0.0";
+            this.lblVer.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(585, 418);
+            this.Controls.Add(this.lblVer);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.txtSearch);
             this.Controls.Add(this.btnSearch);
@@ -410,6 +423,7 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label lblAvailability;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label lblVer;
     }
 }
 

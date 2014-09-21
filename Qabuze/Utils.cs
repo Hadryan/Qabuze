@@ -50,7 +50,7 @@ namespace Qabuze
         internal static string escapeAlbumString(string p, QabuzeAlbum album)
         {
 
-            p = Regex.Replace(@p, "%ARTIST%", album.artist, RegexOptions.IgnoreCase);
+            p = Regex.Replace(@p, "%ALBUMARTIST%", album.artist, RegexOptions.IgnoreCase);
             p = Regex.Replace(@p, "%GENRE%", album.genre, RegexOptions.IgnoreCase);
             p = Regex.Replace(@p, "%ORGANIZATION%", album.label, RegexOptions.IgnoreCase);
             p = Regex.Replace(@p, "%ALBUM%", album.title, RegexOptions.IgnoreCase);

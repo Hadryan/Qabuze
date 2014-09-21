@@ -42,6 +42,7 @@ namespace Qabuze
             lblDuration.Text = "";
             lblRelease.Text = "";
             lblTracks.Text = "";
+            lblVer.Text = "v" + typeof(frmMain).Assembly.GetName().Version.ToString();
             txtSearch.KeyPress += new KeyPressEventHandler(txtSearch_handler);
             AcceptButton = btnSearch;
             txtSearch.Focus();

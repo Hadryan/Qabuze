@@ -211,7 +211,9 @@ namespace Qabuze
                                     + "\" --set-tag=\"TRACKNUMBER=" + kvp_song.Value.track_number
                                     + "\" --set-tag=\"ORGANIZATION=" + album.label
                                     + "\" --set-tag=\"TRACKTOTAL=" + album.track_count
+                                    + "\" --set-tag=\"ALBUMARTIST=" + album.artist
                                     + "\" --set-tag=\"DISKNUMBER=" + kvp_song.Value.media_number
+                                    + "\" --set-tag=\"COMMENT=" + "Created by Quabuze v" + typeof(frmMain).Assembly.GetName().Version
                                     + "\" --import-picture-from=\"" + foldername + "\\folder.jpg" + "\" \"" + fullFilename + "\"",
                             UseShellExecute = false,
                             RedirectStandardOutput = true,

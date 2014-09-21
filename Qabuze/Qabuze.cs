@@ -116,7 +116,15 @@ namespace Qabuze
                         start_date = (string)obj["rights"]["stream"][0]["start_date"];
 
                 }
-                catch (Exception) { }
+                catch (Exception)
+                {
+                    try
+                    {
+                        start_date = Utils.UnixTimeStampToDateTime((int)obj["streamable_at"]).ToString();
+
+                    }
+                    catch (Exception) { }
+                }
                 try
                 {
                         end_date = (string)obj["rights"]["stream"][0]["end_date"];
@@ -228,7 +236,7 @@ namespace Qabuze
             List<KeyValuePair<string, string>> data = new List<KeyValuePair<string, string>>();
             data.Add(new KeyValuePair<string, string>("query", query));
             data.Add(new KeyValuePair<string, string>("type", "albums"));
-            data.Add(new KeyValuePair<string, string>("limit", "50"));
+            data.Add(new KeyValuePair<string, string>("limit", (50 + offset).ToString()));
             data.Add(new KeyValuePair<string, string>("offset", offset.ToString()));
             return (List<QabuzeAlbum>)QabuzeAPI.PerformRequest(QabuzeAPI.instance.BuildRequest("catalog/search", data));
 
