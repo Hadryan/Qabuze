@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSearch));
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.btnTryLM = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -61,6 +62,7 @@
             this.ClientSize = new System.Drawing.Size(477, 261);
             this.Controls.Add(this.btnTryLM);
             this.Controls.Add(this.treeView1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmSearch";
             this.Text = "frmSearch";
             this.Load += new System.EventHandler(this.frmSearch_Load);

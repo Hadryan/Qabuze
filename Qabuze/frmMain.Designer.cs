@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.button1 = new System.Windows.Forms.Button();
             this.txtAlbumId = new System.Windows.Forms.TextBox();
             this.btnGrabAlbumInfo = new System.Windows.Forms.Button();
@@ -395,6 +396,7 @@
             this.Controls.Add(this.btnGrabAlbumInfo);
             this.Controls.Add(this.txtAlbumId);
             this.Controls.Add(this.button1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmMain";
             this.Text = "Qabuze";
             this.Load += new System.EventHandler(this.frmMain_Load);
