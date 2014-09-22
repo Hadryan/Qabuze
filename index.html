@@ -36,26 +36,89 @@
 <strong>Qabuze</strong> <a href="https://ci.appveyor.com/project/butterkekstorte/qabuze/branch/master"><img src="https://ci.appveyor.com/api/projects/status/hmkn8xkhfjydnp96/branch/master" alt="Build status"></a>
 </h1>
 
-<p>A simple Data-gatherer using the Qobuz-API.</p>
+<hr><p>A Music-data-gatherer.</p>
 
-<h2></h2>
+<p>Qabuze is a simple Data-gatherer using the Qobuz-API with optional functionality to download songs.</p>
 
-<h1>
-<a name="disclaimer" class="anchor" href="#disclaimer"><span class="octicon octicon-link"></span></a><em>DISCLAIMER</em>
-</h1>
+<p>For license and disclaimer, please refer to <a href="https://github.com/butterkekstorte/Qabuze/blob/master/LICENSE.md">LICENSE.md</a>.</p>
 
-<p><em>This application is for educational purposes only!</em>
-I am <strong>not</strong> responsible if you choose to use the predefined API-Credentials, which were extracted from the WebPlayer! The settings-menu is intended to save your own API-Credentials.
-Furthermore, you may <strong>ONLY</strong> compile the version with the download ability <em>(define WITHDOWNLOAD)</em>, where not punishable by applicable laws and at your own risk!
-If you intend to compile the download-version, you need to place a metaflac Flac-file tagger into the root of the containing directory with a filename called "metaflac.exe".</p>
+<h2>
+<a name="how-to-use" class="anchor" href="#how-to-use"><span class="octicon octicon-link"></span></a><strong>How to use</strong>
+</h2>
 
-<h2></h2>
+<hr><ol>
+<li>
+<p><strong>Initial setup</strong></p>
 
-<h1>
-<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a><em>LICENSE</em>
-</h1>
+<ul>
+<li>In the upper-right corner click on "Settings"</li>
+<li>Enter your App-Id, App-Secret and User-auth-token</li>
+<li>Set your downloadlocation and your folder- and file-structure *</li>
+<li>
+<p>You can use the following placeholders (case-insensitive): *</p>
 
-<p>This work is currently not licensed, however this only entitles you to clone this software for your own use. Forks and modifications are not allowed as of now. I will decide on a license in the following days.</p>
+<ul>
+<li>%ALBUMARTIST% - Album Artist (eg. "Various Artists" if a compilation or same as %artist%)</li>
+<li>%ARTIST% - Song Artist</li>
+<li>%GENRE% - Genre (not always accurate, complain to Qobuz)</li>
+<li>%ORGANIZATION% - Album label / Recording studio</li>
+<li>%ALBUM% - Album name</li>
+<li>%TRACKTOTAL% - Total amount of tracks in the album</li>
+<li>%RELEASE% - Release-date (again, not always accurate, because of partially incorrect Qobuz-DB-data)</li>
+<li>%TITLE% - Song title</li>
+<li>%TRACKNUMBER% - Track number on disc</li>
+<li>%DISKNUMBER% - Disc number</li>
+<li>%DURATION% - Song duration in seconds</li>
+<li>%EXT% - resolves to "flac"</li>
+</ul>
+</li>
+<li><p>Hit save and restart the application</p></li>
+</ul>
+</li>
+</ol><ol>
+<li>
+<p><strong>Search</strong></p>
+
+<ul>
+<li>Enter your search query into the upper-left textbox and click "Search"</li>
+<li>A new window will open</li>
+<li>Click on any artist and select an album</li>
+<li>The album info will automatically be loaded</li>
+</ul>
+</li>
+<li>
+<p><strong>Grab album info</strong></p>
+
+<ul>
+<li>You can replicate the loading of album-info with the button "Grab Album info" and the textbox to the left of it.</li>
+<li>When you know a album-id of an album you can enter it into the textbox and click on the button to load it.</li>
+</ul>
+</li>
+<li>
+<p>**Download ***</p>
+
+<ul>
+<li>In order to download an album make sure the relevant settings are set.</li>
+<li>Select an album as described in 2 or 3</li>
+<li>Click on the download button.</li>
+</ul>
+</li>
+<li>
+<p>**Download status ***</p>
+
+<ul>
+<li>To see the exact status of your downloads you can use the "Download status"-button.</li>
+<li>Once clicked a pop-up will open with a detailed view.</li>
+<li>Within that view you can clear failed and done threads with the button in the bottom-left.
+
+<ul>
+<li>
+<strong>Note</strong>: This will only remove them from the view, but <em>not</em> from the hard-drive</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol><p>**Only necessary/possible with download-enabled version*</p>
       </section>
     </div>
 
