@@ -43,17 +43,17 @@ For license and disclaimer, please refer to [LICENSE.md](https://github.com/butt
   - When you know a album-id of an album you can enter it into the textbox and click on the button to load it.
 
   
- 4. **Download ***
+ 4. **Download** *
   - In order to download an album make sure the relevant settings are set.
   - Select an album as described in 2 or 3
   - Click on the download button.
  
 
- 5. **Download status ***
+ 5. **Download status** *
   - To see the exact status of your downloads you can use the "Download status"-button.
   - Once clicked a pop-up will open with a detailed view.
   - Within that view you can clear failed and done threads with the button in the bottom-left.
      - **Note**: This will only remove them from the view, but *not* from the hard-drive
 
 
-**Only necessary/possible with download-enabled version*
+* *Only necessary/possible with download-enabled version*
