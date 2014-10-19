@@ -43,6 +43,11 @@ namespace Qabuze
 
         public string BuildRequest(String APICall, List<KeyValuePair<string,string>> data) {
             //Builds a signed request using the given data.
+            this.AppId = Properties.Settings.Default.AppId;
+            this.AppSecret = Properties.Settings.Default.AppSecret;
+            this.UserAuthToken = Properties.Settings.Default.UserAuthToken;
+            this.baseURL = Properties.Settings.Default.baseURL; 
+            
             data.Sort(Utils.sortKeyString);
             string sig = APICall.Replace("/", "");
             foreach (KeyValuePair<string, string> pair in data)
@@ -68,14 +73,7 @@ namespace Qabuze
             return url;
         }
 
-        public QabuzeAPI() {
-
-            this.AppId = Properties.Settings.Default.AppId;
-            this.AppSecret = Properties.Settings.Default.AppSecret;
-            this.UserAuthToken = Properties.Settings.Default.UserAuthToken;
-            this.baseURL = Properties.Settings.Default.baseURL;
-
-        }
+        public QabuzeAPI() { }
 
         public static Object PerformRequest(string url) {
             string response;
@@ -129,27 +127,27 @@ namespace Qabuze
                 }
 
                 string start_date = "9999-12-31", end_date = "9999-12-31";
-                try
+              /*  try
                 {
                         start_date = (string)obj["rights"]["stream"][0]["start_date"];
 
                 }
                 catch (Exception)
-                {
+                {*/
                     try
                     {
                         start_date = Utils.UnixTimeStampToDateTime((int)obj["streamable_at"]).ToString();
 
                     }
                     catch (Exception) { }
-                }
+               /* }
                 try
                 {
                         end_date = (string)obj["rights"]["stream"][0]["end_date"];
 
                 }
                 catch (Exception) { }
-
+                */
                 DateTime d_start = DateTime.Parse(start_date).ToUniversalTime();
                 DateTime d_end = DateTime.Parse(end_date).ToUniversalTime();
                 DateTime d_curr = DateTime.UtcNow;
