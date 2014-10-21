@@ -62,7 +62,7 @@ namespace Qabuze
                     }
                     if (!treeView1.Nodes[treeView1.Nodes.IndexOfKey(album.artistID.ToString())].Nodes.ContainsKey(album.id))
                     {
-                        treeView1.Nodes[treeView1.Nodes.IndexOfKey(album.artistID.ToString())].Nodes.Add(album.id, album.title);
+                        treeView1.Nodes[treeView1.Nodes.IndexOfKey(album.artistID.ToString())].Nodes.Add(album.id, album.title + " (" + album.track_count + " Tracks)");
                     }
                 }
                 catch (Exception e) {
@@ -70,6 +70,7 @@ namespace Qabuze
                 }
 
             }
+                    treeView1.Sort();
 
         }
 

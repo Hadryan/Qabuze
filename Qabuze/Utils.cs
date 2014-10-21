@@ -103,9 +103,9 @@ namespace Qabuze
 
         internal static string truncateIfNecessary(string p)
         {
-            if ((Properties.Settings.Default.outputFolder.Length + p.Length) >= 245)
+            if ((QabuzeAPI.Config.getInstance().outputFolder.Length + p.Length) >= 245)
             {
-                p = p.Substring(0, (245 - Properties.Settings.Default.outputFolder.Length)) + ".flac";
+                p = p.Substring(0, (245 - QabuzeAPI.Config.getInstance().outputFolder.Length)) + ".flac";
             }
 
             return p;
@@ -129,9 +129,9 @@ namespace Qabuze
             p = @p.Replace("]", "");
             p = @p.Replace("\"", "");
 
-            if ((Properties.Settings.Default.outputFolder.Length + p.Length) >= 245)
+            if ((QabuzeAPI.Config.getInstance().outputFolder.Length + p.Length) >= 245)
             {
-                p = p.Substring(0, (245 - Properties.Settings.Default.outputFolder.Length)) + ".flac";
+                p = p.Substring(0, (245 - QabuzeAPI.Config.getInstance().outputFolder.Length)) + ".flac";
             }
 
             return p;

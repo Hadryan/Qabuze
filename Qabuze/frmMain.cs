@@ -25,6 +25,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.Net;
 using System.Threading;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 
 namespace Qabuze
@@ -38,6 +40,7 @@ namespace Qabuze
         {
             InitializeComponent();
             instance = this;
+            QabuzeAPI.init();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -64,7 +67,7 @@ namespace Qabuze
             txtSearch.KeyPress += new KeyPressEventHandler(txtSearch_handler);
             AcceptButton = btnSearch;
             txtSearch.Focus();
-            //end reset            
+            //end reset   
         }
 
         private void txtSearch_handler(object sender, KeyPressEventArgs e)
@@ -133,7 +136,7 @@ namespace Qabuze
 
         private void btnSearch_Click_1(object sender, EventArgs e)
         {
-            frmSearch.instance.initSearch(txtSearch.Text);
+            frmSearch.instance.initSearch(txtSearch.Text, 0);
             frmSearch.instance.Show();
             frmSearch.instance.Focus();
 
@@ -190,6 +193,8 @@ namespace Qabuze
         {
             (new frmLicense()).ShowDialog();
         }
+
+       
 
     }
 }

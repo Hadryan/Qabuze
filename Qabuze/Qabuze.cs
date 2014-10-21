@@ -37,16 +37,56 @@ namespace Qabuze
     public class QabuzeAPI
     {
 
-        public static QabuzeAPI instance = new QabuzeAPI();
-        
-        public string AppId, AppSecret, UserAuthToken, baseURL = "http://www.qobuz.com/api.json/0.2/";
+        public class Config {
+
+            private static Config instance = null;
+
+            public static Config getInstance() {
+                if (Config.instance == null) {
+                    Config.instance = new Config();
+                }
+                return Config.instance;
+            }
+
+            public List<Account> accounts = new List<Account>();
+
+            public string appId, appSecret, apiURL, fileScheme, folderScheme, outputFolder;
+            
+        }
+
+        public class Account {
+
+            private string name, token;
+
+            public string getToken() { return this.token; }
+
+            public string getName() { return this.name; }
+
+            public Account setToken(string token) { this.token = token; return this; }
+
+            public Account setName(string name) { this.name = name; return this; }
+
+            public Account(string name, string token) {
+                this.token = token;
+                this.name = name;
+            }
+
+        }
+
+        public static QabuzeAPI instance = null;
+
+        public static void init() {
+            QabuzeAPI.instance = new QabuzeAPI();
+        }
+
+        public string AppId, AppSecret, UserAuthToken, baseURL;
 
         public string BuildRequest(String APICall, List<KeyValuePair<string,string>> data) {
             //Builds a signed request using the given data.
-            this.AppId = Properties.Settings.Default.AppId;
-            this.AppSecret = Properties.Settings.Default.AppSecret;
-            this.UserAuthToken = Properties.Settings.Default.UserAuthToken;
-            this.baseURL = Properties.Settings.Default.baseURL; 
+            this.AppId = QabuzeAPI.Config.getInstance().appId;
+            this.AppSecret = QabuzeAPI.Config.getInstance().appSecret;
+            this.UserAuthToken = QabuzeAPI.Config.getInstance().accounts.AsReadOnly()[0].getToken();
+            this.baseURL = QabuzeAPI.Config.getInstance().apiURL; 
             
             data.Sort(Utils.sortKeyString);
             string sig = APICall.Replace("/", "");
@@ -73,7 +113,73 @@ namespace Qabuze
             return url;
         }
 
-        public QabuzeAPI() { }
+        public QabuzeAPI() {
+
+            string json = "";
+            if (System.IO.File.Exists("config.json")) {
+                json = System.IO.File.ReadAllText("config.json");
+            } else { 
+           
+                try {
+                        json = System.IO.File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\qabuze.json");
+		        } catch (Exception) {                		
+                        Console.WriteLine("No valid configfile found!");
+                        return;
+	            }
+            } 
+            try {
+                JObject obj = JObject.Parse(json);
+                JObject config = (JObject)obj["qabuze"];
+                if (config == null)
+                {
+                    throw new Exception();
+                }
+
+                Console.WriteLine("=== Accounts ===");
+                foreach (JObject acc in config["accounts"])
+                {
+                    Console.WriteLine("Name: " + acc["name"]);
+                    //todo: Implement login/get-token feature to use cleartext creds in config and replace them with a token.
+                    QabuzeAPI.Config.getInstance().accounts.Add(new QabuzeAPI.Account((string)acc["name"], (string)acc["token"]));
+                    //Console.WriteLine(acc["token"]);
+                }
+                Console.WriteLine("=== Accounts ===\n");
+
+                QabuzeAPI.Config.getInstance().appId        = (string)config["appId"];
+                QabuzeAPI.Config.getInstance().appSecret    = (string)config["appSecret"];
+                QabuzeAPI.Config.getInstance().apiURL       = (string)config["apiURL"];
+                QabuzeAPI.Config.getInstance().fileScheme   = (string)config["fileScheme"];
+                QabuzeAPI.Config.getInstance().folderScheme = (string)config["folderScheme"];
+                QabuzeAPI.Config.getInstance().outputFolder = (string)config["outputFolder"];
+                
+                #if DEBUG
+                Console.WriteLine("appId: " + QabuzeAPI.Config.getInstance().appId);
+                Console.WriteLine("appSecret: " + QabuzeAPI.Config.getInstance().appSecret);
+                Console.WriteLine("apiURL: " + QabuzeAPI.Config.getInstance().apiURL);
+                Console.WriteLine("fileScheme: " + QabuzeAPI.Config.getInstance().fileScheme);
+                Console.WriteLine("folderScheme: " + QabuzeAPI.Config.getInstance().folderScheme);
+                Console.WriteLine("outputFolder: " + QabuzeAPI.Config.getInstance().outputFolder);
+                Console.WriteLine("\n");
+                #endif
+                
+                #if DEBUG
+                foreach (QabuzeAPI.Account acc in QabuzeAPI.Config.getInstance().accounts) {
+
+                    Console.WriteLine(acc.getName() + ": " + acc.getToken());
+                                    
+                }
+                #endif
+
+                if (QabuzeAPI.Config.getInstance().accounts.Count == 0) {
+                    MessageBox.Show("Please add an account to the config file!", "No account configured");
+                    frmMain.instance.Close();
+                }
+
+            } catch (Exception) {
+                Console.WriteLine("Configfile invalid!");
+            }
+            instance = this;
+        }
 
         public static Object PerformRequest(string url) {
             string response;
@@ -110,20 +216,26 @@ namespace Qabuze
 
                 for (int i = 0; i < amt_tracks; i++)
                 {
-                    Console.WriteLine(obj["tracks"]["items"][i]["id"]);
+                    JObject track = (JObject) obj["tracks"]["items"][i];
+                    try {
+
+                        Console.WriteLine("Adding Track #" + i + " with ID " + track["id"] + "...");
                     QabuzeSong song = new QabuzeSong(
-                        (string) obj["tracks"]["items"][i]["id"],
-                        (string) obj["tracks"]["items"][i]["title"],
-                        (string) obj["tracks"]["items"][i]["performer"]["name"],
-                        (string) obj["id"],
-                        (int)    obj["tracks"]["items"][i]["duration"],
-                        (int)    obj["tracks"]["items"][i]["track_number"],
-                        (int)obj["tracks"]["items"][i]["media_number"],
-                        (string)obj["title"],
-                        (string)obj["genre"]["name"]
+                        (string)    track["id"],
+                        (string)    track["title"],
+                        (string)    track["performer"]["name"],
+                        (string)    obj["id"],
+                        (int)       track["duration"],
+                        (int)       track["track_number"],
+                        (int)       track["media_number"],
+                        (string)    obj["title"],
+                        (string)    obj["genre"]["name"]
                         );
                     KeyValuePair<int, QabuzeSong> kvp = new KeyValuePair<int, QabuzeSong>(i, song);
                     objReturn.songs.Add(kvp);
+                    } catch (Exception e){
+                        Console.Error.WriteLine("Whoops. Track #" + i + " with ID " + track["id"] + " could not be added");
+                    }
                 }
 
                 string start_date = "9999-12-31", end_date = "9999-12-31";
@@ -188,15 +300,18 @@ namespace Qabuze
 
                 for (int i = 0; i < upperLimit - offset; i++)
                 {
+                    JObject jalbum = (JObject)obj["albums"]["items"][i];
+
                     QabuzeAlbum album = new QabuzeAlbum();
-                    album.title = (string)obj["albums"]["items"][i]["title"];
-                    album.id = (string)obj["albums"]["items"][i]["id"];
-                    album.genre = (string)obj["albums"]["items"][i]["genre"]["name"];
-                    album.artist = (string)obj["albums"]["items"][i]["artist"]["name"];
-                    album.artistID = (int?)obj["albums"]["items"][i]["artist"]["id"];
-                    album.description = (string)obj["albums"]["items"][i]["description"];
-                    album.coverURL = (string)obj["albums"]["items"][i]["image"]["large"];
-                    album.label = (string)obj["albums"]["items"][i]["label"]["name"];
+                    album.title = (string)jalbum["title"];
+                    album.id = (string)jalbum["id"];
+                    album.genre = (string)jalbum["genre"]["name"];
+                    album.artist = (string)jalbum["artist"]["name"];
+                    album.artistID = (int?)jalbum["artist"]["id"];
+                    album.description = (string)jalbum["description"];
+                    album.coverURL = (string)jalbum["image"]["large"];
+                    album.label = (string)jalbum["label"]["name"];
+                    album.track_count = (int)jalbum["tracks_count"];
                     
                     objReturn.Add(album);
                 }
@@ -296,7 +411,7 @@ namespace Qabuze
             {
                 List<KeyValuePair<string, string>> data = new List<KeyValuePair<string, string>>();
 
-                data.Add(new KeyValuePair<string, string>("format_id", (lossless ? "6" : "5")));
+                data.Add(new KeyValuePair<string, string>("format_id", "6"));
                 data.Add(new KeyValuePair<string, string>("intent", "stream"));
                 data.Add(new KeyValuePair<string, string>("track_id", this.track_id));
 
@@ -328,7 +443,7 @@ namespace Qabuze
                 }
                 catch (Exception) { }
 
-                if (format_id != 6 || isSample == 1)
+                if (format_id < 6 || isSample == 1)
                 {
 
                     Console.WriteLine("Track #" + track_id + " not to be downloaded because:");
@@ -336,7 +451,7 @@ namespace Qabuze
                     {
                         Console.WriteLine(code);
                     }
-                    Console.WriteLine("The format is " + ((format_id != 6) ? "NOT" : "") + " FLAC");
+                    Console.WriteLine("The format is " + ((format_id < 5) ? "NOT " : "") + "FLAC");
                     Console.WriteLine((isSample == 1) ? "The file is a sample" : "The file is (probaly) not a sample");
 
                     return null;

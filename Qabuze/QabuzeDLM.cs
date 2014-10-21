@@ -190,14 +190,14 @@ namespace Qabuze
             {
                 kvp_song = album.songs[i];
 
-                string foldername = (Properties.Settings.Default.outputFolder + "\\" + @Utils.escapeMetaString(@Properties.Settings.Default.folderStructure, album, kvp_song.Value));
+                string foldername = (QabuzeAPI.Config.getInstance().outputFolder + "\\" + @Utils.escapeMetaString(QabuzeAPI.Config.getInstance().folderScheme, album, kvp_song.Value));
                 System.IO.Directory.CreateDirectory(foldername);
                 if (!System.IO.File.Exists(foldername + "\\folder.jpg"))
                 {
                     webClient.DownloadFile(new Uri(album.coverURL), foldername + "\\folder.jpg");
                     pushStatus(currentThread, DLMEvent.working, "Downloaded Cover!");
                 } //kvp_song.Value.track_id, kvp_song.Value.getDownloadLink(Properties.Settings.Default.lossless))
-                    string filename = Utils.escapeMetaString(Properties.Settings.Default.filenames, album, kvp_song.Value).Replace("\\", "") ;
+                    string filename = Utils.escapeMetaString(QabuzeAPI.Config.getInstance().fileScheme, album, kvp_song.Value).Replace("\\", "");
                     string fullFilename = Utils.truncateIfNecessary(foldername + "\\" + @filename);
                     pushStatus(currentThread, DLMEvent.working, "Now downloading \"" + filename + "\" ...", i + 1);
 

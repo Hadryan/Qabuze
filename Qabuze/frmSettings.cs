@@ -35,24 +35,12 @@ namespace Qabuze
 
         private void frmSettings_Load(object sender, EventArgs e)
         {
-            this.txtAppId.Text = Properties.Settings.Default.AppId;
-            this.txtAppSecret.Text = Properties.Settings.Default.AppSecret;
-            this.txtUserAuthToken.Text = Properties.Settings.Default.UserAuthToken;
-            this.txtFolderOutput.Text = Properties.Settings.Default.outputFolder;
-            this.txtFilenames.Text = Properties.Settings.Default.filenames;
-            this.txtFolderStructure.Text = Properties.Settings.Default.folderStructure;
-        }
-
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            Properties.Settings.Default.AppId = this.txtAppId.Text;
-            Properties.Settings.Default.AppSecret = this.txtAppSecret.Text;
-            Properties.Settings.Default.UserAuthToken = this.txtUserAuthToken.Text;
-            Properties.Settings.Default.outputFolder = this.txtFolderOutput.Text;
-            Properties.Settings.Default.filenames = this.txtFilenames.Text;
-            Properties.Settings.Default.folderStructure = this.txtFolderStructure.Text;
-            Properties.Settings.Default.Save();
-            Properties.Settings.Default.Reload();
+            this.txtAppId.Text = QabuzeAPI.Config.getInstance().appId;
+            this.txtAppSecret.Text = QabuzeAPI.Config.getInstance().appSecret;
+            this.txtUserAuthToken.Text = QabuzeAPI.Config.getInstance().accounts.AsReadOnly()[0].getToken();
+            this.txtFolderOutput.Text = QabuzeAPI.Config.getInstance().outputFolder;
+            this.txtFilenames.Text = QabuzeAPI.Config.getInstance().fileScheme;
+            this.txtFolderStructure.Text = QabuzeAPI.Config.getInstance().folderScheme;
         }
 
         private void button1_Click(object sender, EventArgs e)
