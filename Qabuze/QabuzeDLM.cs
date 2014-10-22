@@ -199,6 +199,10 @@ namespace Qabuze
                 } //kvp_song.Value.track_id, kvp_song.Value.getDownloadLink(Properties.Settings.Default.lossless))
                     string filename = Utils.escapeMetaString(QabuzeAPI.Config.getInstance().fileScheme, album, kvp_song.Value).Replace("\\", "");
                     string fullFilename = Utils.truncateIfNecessary(foldername + "\\" + @filename);
+                    if (System.IO.File.Exists(fullFilename)) {
+                        pushStatus(currentThread, DLMEvent.done, "Skipping \"" + filename + "\"! File already exists...", i + 1);
+                        continue;
+                    }
                     pushStatus(currentThread, DLMEvent.working, "Now downloading \"" + filename + "\" ...", i + 1);
 
                     string url = kvp_song.Value.getDownloadLink(true);
@@ -209,8 +213,20 @@ namespace Qabuze
                     }
                     try
                     {
-                        webClient.DownloadFile(new Uri(url), fullFilename);
-                        pushStatus(currentThread, DLMEvent.loaded, "Downloading \"" + filename + "\" succeeded!", i + 1);
+                        bool finished = false;
+                        while (!finished)
+                        { 
+                            webClient.DownloadFile(new Uri(url), fullFilename);
+                            if (System.IO.File.Exists(fullFilename))
+                            {
+                                pushStatus(currentThread, DLMEvent.loaded, "Downloading \"" + filename + "\" succeeded!", i + 1);
+                                finished = true;
+                            }
+                            else {
+                                pushStatus(currentThread, DLMEvent.working, "Retry download \"" + filename + "\"...", i + 1);
+                            }
+                            System.Threading.Thread.Sleep(500); // Sleep to make sure the file-lock has vanished.
+                        }
                     }
                     catch (Exception e)
                     {

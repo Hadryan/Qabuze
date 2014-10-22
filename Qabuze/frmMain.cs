@@ -63,6 +63,7 @@ namespace Qabuze
             lblDuration.Text = "";
             lblRelease.Text = "";
             lblTracks.Text = "";
+            lblEstSize.Text = "";
             lblVer.Text = "v" + typeof(frmMain).Assembly.GetName().Version.ToString();
             txtSearch.KeyPress += new KeyPressEventHandler(txtSearch_handler);
             AcceptButton = btnSearch;
@@ -85,7 +86,7 @@ namespace Qabuze
             if (album != null)
             {
                 TimeSpan t = TimeSpan.FromSeconds((int)album.duration);
-                string duration = string.Format("{0:D2}h:{1:D2}m:{2:D2}s",
+                string duration = string.Format("{0:D2}:{1:D2}:{2:D2}",
                                 t.Hours,
                                 t.Minutes,
                                 t.Seconds);
@@ -96,6 +97,7 @@ namespace Qabuze
                 lblGenre.Text = album.genre;
                 lblLabel.Text = album.label;
                 lblDuration.Text = duration;
+                lblEstSize.Text = "< " + (((t.Hours * 60) + t.Minutes) * 11) + " MiB *"; //Estimate uses 16 bit 44.1 KHz PCM. FLAC size WILL be lower!
                 if (album.release_timestamp == null)
                 {
                     lblRelease.Text = "no date";
@@ -105,8 +107,9 @@ namespace Qabuze
                 lblTracks.Text = album.track_count.ToString();
                 lblAvailability.Text = (album.availableForStreaming ? "Yes (until " : "No (available ");
                 string until = album.availableUntil.ToShortDateString(), from = album.availableFrom.ToShortDateString();
-                until = until.Replace("30.12.9999", "forever");
-                from = from.Replace("30.12.9999", "at no time");
+                DateTime dateToDisplay = new DateTime(9999, 12, 30, 0, 0, 0); //Use this to accomodate for Localization-issues regarding date-format
+                until = until.Replace(dateToDisplay.ToShortDateString(), "forever");
+                from = from.Replace(dateToDisplay.ToShortDateString(), "at no time");
                 lblAvailability.Text += (album.availableForStreaming ? until : from) + ")";
                 lblAvailability.ForeColor = (album.availableForStreaming ? Color.DarkGreen : Color.DarkRed);
                 #if(WITHDOWNLOAD)
@@ -192,6 +195,16 @@ namespace Qabuze
         private void button3_Click(object sender, EventArgs e)
         {
             (new frmLicense()).ShowDialog();
+        }
+
+        private void label11_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label10_Click(object sender, EventArgs e)
+        {
+
         }
 
        
