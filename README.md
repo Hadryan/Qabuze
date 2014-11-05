@@ -13,27 +13,27 @@ For license and disclaimer, please refer to [LICENSE.md](https://github.com/butt
  1. **Initial setup**
   - create a file called 'config.json' in the application directory or a 'qabuze.json' in the userfolder (C:\Users\&lt;Your Username&gt;\qabuze.json).
   - use this skeleton to configure it to your needs.
-    <code>{
-      "qabuze": {
-        "accounts": [
-          {
-            "name": "1st account",
-            "token": "This token will be used for authentication",
-            "password": null
-          },
-          {
-            "name": "2nd account",
-            "token": "LOGIN",
-            "password": "this password will be used to get a token"
-          }
-        ],
-        "appId": "&lt;own app-id or 214748364&gt;",
-        "appSecret": "&lt;own app-secret or 6fdcbccb7a073f35fbd16a193cdef6c4&gt;",
-        "apiURL": "http://www.qobuz.com/api.json/0.2/",
-        "fileScheme": "%disknumber% - %tracknumber% - %title% - %album% - %artist%.%ext%",
-        "folderScheme": "%ALBUMARTIST%\\%album%",
-        "outputFolder": "C:\\Users\\&lt;Your Username&gt;\\QabuzeDownloads\\"
-      }
+    <code>{<br/>
+      "qabuze": {<br/>
+        "accounts": [<br/>
+          {<br/>
+            "name": "1st account",<br/>
+            "token": "This token will be used for authentication",<br/>
+            "password": null<br/>
+          },<br/>
+          {<br/>
+            "name": "2nd account",<br/>
+            "token": "LOGIN",<br/>
+            "password": "this password will be used to get a token"<br/>
+          }<br/>
+        ],<br/>
+        "appId": "&lt;own app-id or 214748364&gt;",<br/>
+        "appSecret": "&lt;own app-secret or 6fdcbccb7a073f35fbd16a193cdef6c4&gt;",<br/>
+        "apiURL": "http://www.qobuz.com/api.json/0.2/",<br/>
+        "fileScheme": "%disknumber% - %tracknumber% - %title% - %album% - %artist%.%ext%",<br/>
+        "folderScheme": "%ALBUMARTIST%\\%album%",<br/>
+        "outputFolder": "C:\\Users\\&lt;Your Username&gt;\\QabuzeDownloads\\"<br/>
+      }<br/>
     }</code>
 
  2. **Search**
