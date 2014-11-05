@@ -13,7 +13,7 @@ For license and disclaimer, please refer to [LICENSE.md](https://github.com/butt
  1. **Initial setup**
   - create a file called 'config.json' in the application directory or a 'qabuze.json' in the userfolder (C:\Users\&lt;Your Username&gt;\qabuze.json).
   - use this skeleton to configure it to your needs.
-    {
+    <code>{
       "qabuze": {
         "accounts": [
           {
@@ -34,7 +34,7 @@ For license and disclaimer, please refer to [LICENSE.md](https://github.com/butt
         "folderScheme": "%ALBUMARTIST%\\%album%",
         "outputFolder": "C:\\Users\\&lt;Your Username&gt;\\QabuzeDownloads\\"
       }
-    }
+    }</code>
 
  2. **Search**
   - Enter your search query into the upper-left textbox and click "Search"
