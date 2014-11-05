@@ -47,8 +47,12 @@ namespace Qabuze
             }
             this.query = query;
             this.Text = "Search on: \"" + this.query + "\"";
-            List<QabuzeAlbum> results = (List<QabuzeAlbum>) QabuzeAPI.instance.search(query, this.offset);
-
+            List<QabuzeAlbum> results = new List<QabuzeAlbum>();
+            
+            for (int credIndex = 0; credIndex < QabuzeAPI.Config.getInstance().accounts.Count; credIndex++)
+            {
+                results.AddRange((List<QabuzeAlbum>) QabuzeAPI.instance.search(query, this.offset, credIndex));
+            }
             if (results == null) {
                 return;
             }

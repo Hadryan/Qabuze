@@ -81,11 +81,17 @@ namespace Qabuze
 
         public string AppId, AppSecret, UserAuthToken, baseURL;
 
-        public string BuildRequest(String APICall, List<KeyValuePair<string,string>> data) {
+        public string BuildRequest(String APICall, List<KeyValuePair<string,string>> data, Boolean noAuth = false, int credIndex = 0) {
             //Builds a signed request using the given data.
             this.AppId = QabuzeAPI.Config.getInstance().appId;
             this.AppSecret = QabuzeAPI.Config.getInstance().appSecret;
-            this.UserAuthToken = QabuzeAPI.Config.getInstance().accounts.AsReadOnly()[0].getToken();
+            try
+            {
+                this.UserAuthToken = QabuzeAPI.Config.getInstance().accounts.AsReadOnly()[credIndex].getToken();
+            } catch (Exception e) {
+                this.UserAuthToken = "";
+            }
+
             this.baseURL = QabuzeAPI.Config.getInstance().apiURL; 
             
             data.Sort(Utils.sortKeyString);
@@ -100,9 +106,12 @@ namespace Qabuze
             sig = Utils.GetMd5Hash(sig);
 
             data.Add(new KeyValuePair<string, string>("app_id", AppId));
-            data.Add(new KeyValuePair<string, string>("user_auth_token", UserAuthToken));
-            data.Add(new KeyValuePair<string, string>("request_ts", timestamp.ToString()));
-            data.Add(new KeyValuePair<string, string>("request_sig", sig));
+            if (!noAuth)
+            {
+                data.Add(new KeyValuePair<string, string>("user_auth_token", UserAuthToken));
+                data.Add(new KeyValuePair<string, string>("request_ts", timestamp.ToString()));
+                data.Add(new KeyValuePair<string, string>("request_sig", sig));
+            }
 
             string url = baseURL + APICall + "?";
             foreach (KeyValuePair<string, string> pair in data)
@@ -116,42 +125,32 @@ namespace Qabuze
         public QabuzeAPI() {
 
             string json = "";
-            if (System.IO.File.Exists("config.json")) {
-                json = System.IO.File.ReadAllText("config.json");
+            JObject obj = null;
+            if (System.IO.File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\qabuze.json")) {
+                json = System.IO.File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\qabuze.json");
             } else { 
-           
                 try {
-                        json = System.IO.File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\qabuze.json");
+                    json = System.IO.File.ReadAllText("config.json");
 		        } catch (Exception) {                		
                         Console.WriteLine("No valid configfile found!");
                         return;
 	            }
             } 
             try {
-                JObject obj = JObject.Parse(json);
+                obj = JObject.Parse(json);
                 JObject config = (JObject)obj["qabuze"];
                 if (config == null)
                 {
                     throw new Exception();
                 }
 
-                Console.WriteLine("=== Accounts ===");
-                foreach (JObject acc in config["accounts"])
-                {
-                    Console.WriteLine("Name: " + acc["name"]);
-                    //todo: Implement login/get-token feature to use cleartext creds in config and replace them with a token.
-                    QabuzeAPI.Config.getInstance().accounts.Add(new QabuzeAPI.Account((string)acc["name"], (string)acc["token"]));
-                    //Console.WriteLine(acc["token"]);
-                }
-                Console.WriteLine("=== Accounts ===\n");
-
-                QabuzeAPI.Config.getInstance().appId        = (string)config["appId"];
-                QabuzeAPI.Config.getInstance().appSecret    = (string)config["appSecret"];
-                QabuzeAPI.Config.getInstance().apiURL       = (string)config["apiURL"];
-                QabuzeAPI.Config.getInstance().fileScheme   = (string)config["fileScheme"];
+                QabuzeAPI.Config.getInstance().appId = (string)config["appId"];
+                QabuzeAPI.Config.getInstance().appSecret = (string)config["appSecret"];
+                QabuzeAPI.Config.getInstance().apiURL = (string)config["apiURL"];
+                QabuzeAPI.Config.getInstance().fileScheme = (string)config["fileScheme"];
                 QabuzeAPI.Config.getInstance().folderScheme = (string)config["folderScheme"];
                 QabuzeAPI.Config.getInstance().outputFolder = (string)config["outputFolder"];
-                
+
                 #if DEBUG
                 Console.WriteLine("appId: " + QabuzeAPI.Config.getInstance().appId);
                 Console.WriteLine("appSecret: " + QabuzeAPI.Config.getInstance().appSecret);
@@ -161,7 +160,40 @@ namespace Qabuze
                 Console.WriteLine("outputFolder: " + QabuzeAPI.Config.getInstance().outputFolder);
                 Console.WriteLine("\n");
                 #endif
-                
+
+                Console.WriteLine("=== Accounts ===");
+                foreach (JObject acc in config["accounts"])
+                {
+                    Console.WriteLine("Name: " + acc["name"]);
+                    if ((string)acc["token"] == "LOGIN")
+                    {
+                        Console.WriteLine("Aquiring Usertoken...");
+                        List<KeyValuePair<string, string>> data = new List<KeyValuePair<string, string>>();
+
+                        acc["password"] = Utils.GetMd5Hash((string)acc["password"]);
+
+                        data.Add(new KeyValuePair<string, string>("username", (string)acc["name"]));
+                        data.Add(new KeyValuePair<string, string>("password", (string)acc["password"]));
+
+                        string response = (new WebClient()).DownloadString(BuildRequest("user/login", data, true));
+
+                        JObject resp = JObject.Parse(response);
+#if DEBUG
+                        System.IO.File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\qabuze_account_" + (string)acc["name"] + ".json", resp.ToString());
+#endif
+                        acc["token"] = (string)resp["user_auth_token"];
+                        Console.WriteLine((string)acc["token"]);
+                        acc["password"] = null;
+                        QabuzeAPI.Config.getInstance().accounts.Add(new QabuzeAPI.Account((string)acc["name"], (string)acc["token"]));
+
+                    }
+                    else {
+                    QabuzeAPI.Config.getInstance().accounts.Add(new QabuzeAPI.Account((string)acc["name"], (string)acc["token"]));
+                    //Console.WriteLine(acc["token"]);
+                    }
+                }
+                Console.WriteLine("=== Accounts ===\n");
+
                 #if DEBUG
                 foreach (QabuzeAPI.Account acc in QabuzeAPI.Config.getInstance().accounts) {
 
@@ -175,10 +207,22 @@ namespace Qabuze
                     frmMain.instance.Close();
                 }
 
+                #if DEBUG
+                Console.WriteLine(obj.ToString());
+                System.IO.File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\qabuze.json", obj.ToString());
+                #endif
+
             } catch (Exception) {
                 Console.WriteLine("Configfile invalid!");
+                Console.WriteLine(obj.ToString());
             }
             instance = this;
+            #if WITHDOWNLOAD
+            if (!System.IO.File.Exists("metaflac.exe"))
+            {
+                MessageBox.Show("Metaflac could not be found. Files will NOT be tagged!", "Metaflac not found");
+            }
+            #endif
         }
 
         public static Object PerformRequest(string url) {
@@ -356,12 +400,7 @@ namespace Qabuze
            // Console.WriteLine(response);
             return (null);
         }
-        public List<QabuzeAlbum> search(string query)
-        {
-            return search(query, 0);
-
-        }
-        public List<QabuzeAlbum> search(string query, int offset)
+        public List<QabuzeAlbum> search(string query, int offset = 0, int credIndex = 0)
         {
 
             List<KeyValuePair<string, string>> data = new List<KeyValuePair<string, string>>();
@@ -369,7 +408,7 @@ namespace Qabuze
             data.Add(new KeyValuePair<string, string>("type", "albums"));
             data.Add(new KeyValuePair<string, string>("limit", (50 + offset).ToString()));
             data.Add(new KeyValuePair<string, string>("offset", offset.ToString()));
-            return (List<QabuzeAlbum>)QabuzeAPI.PerformRequest(QabuzeAPI.instance.BuildRequest("catalog/search", data));
+            return (List<QabuzeAlbum>)QabuzeAPI.PerformRequest(QabuzeAPI.instance.BuildRequest("catalog/search", data, false, credIndex));
 
         }
 
@@ -402,64 +441,80 @@ namespace Qabuze
 
             List<KeyValuePair<string, string>> data = new List<KeyValuePair<string, string>>();
             data.Add(new KeyValuePair<string, string>("track_id", id));
-            return (QabuzeSong)QabuzeAPI.PerformRequest(QabuzeAPI.instance.BuildRequest("track/get", data));
-
+            for (int credIndex = 0; credIndex < QabuzeAPI.Config.getInstance().accounts.Count; credIndex++)
+            {
+                QabuzeSong tmp = (QabuzeSong) QabuzeAPI.PerformRequest(QabuzeAPI.instance.BuildRequest("track/get", data, false, credIndex));
+                if(tmp != null){
+                    return tmp;
+                }
+            }
+            return null;
         }
 
         public string getDownloadLink(bool lossless) {
             try
             {
-                List<KeyValuePair<string, string>> data = new List<KeyValuePair<string, string>>();
-
-                data.Add(new KeyValuePair<string, string>("format_id", "6"));
-                data.Add(new KeyValuePair<string, string>("intent", "stream"));
-                data.Add(new KeyValuePair<string, string>("track_id", this.track_id));
-
-                string response = (new WebClient()).DownloadString(QabuzeAPI.instance.BuildRequest("track/getFileUrl", data));
-                JObject obj = JObject.Parse(response);
-
-                int format_id = 0, isSample = 2;
-                List<string> restrictions = new List<string>();
-
-                try
+                for (int credIndex = 0; credIndex < QabuzeAPI.Config.getInstance().accounts.Count; credIndex++)
                 {
-                    format_id = ((int)obj["format_id"]);
 
-                }
-                catch (Exception) { }
-                try
-                {
-                    isSample = ((bool)obj["sample"]) ? 1 : 0;
+                    List<KeyValuePair<string, string>> data = new List<KeyValuePair<string, string>>();
 
-                }
-                catch (Exception) { }
-                try
-                {
-                    for (int i = 0; i < 10; i++)
+                    data.Add(new KeyValuePair<string, string>("format_id", "6"));
+                    data.Add(new KeyValuePair<string, string>("intent", "stream"));
+                    data.Add(new KeyValuePair<string, string>("track_id", this.track_id));
+
+                    string response = (new WebClient()).DownloadString(QabuzeAPI.instance.BuildRequest("track/getFileUrl", data, false, credIndex));
+                    JObject obj = JObject.Parse(response);
+
+                    int format_id = 0, isSample = 2;
+                    List<string> restrictions = new List<string>();
+
+                    try
                     {
-                        restrictions.Add((string)obj["restrictions"][i]["code"]);
+                        format_id = ((int)obj["format_id"]);
+
                     }
-
-                }
-                catch (Exception) { }
-
-                if (format_id < 6 || isSample == 1)
-                {
-
-                    Console.WriteLine("Track #" + track_id + " not to be downloaded because:");
-                    foreach (string code in restrictions)
+                    catch (Exception) { }
+                    try
                     {
-                        Console.WriteLine(code);
-                    }
-                    Console.WriteLine("The format is " + ((format_id < 5) ? "NOT " : "") + "FLAC");
-                    Console.WriteLine((isSample == 1) ? "The file is a sample" : "The file is (probaly) not a sample");
+                        isSample = ((bool)obj["sample"]) ? 1 : 0;
 
-                    return null;
+                    }
+                    catch (Exception) { }
+                    try
+                    {
+                        for (int i = 0; i < 10; i++)
+                        {
+                            restrictions.Add((string)obj["restrictions"][i]["code"]);
+                        }
+
+                    }
+                    catch (Exception) { }
+
+                    if (format_id < 6 || isSample == 1)
+                    {
+
+                        Console.WriteLine("Track #" + track_id + " not to be downloaded via account '" + QabuzeAPI.Config.getInstance().accounts[credIndex].getName() + "' because:");
+                        foreach (string code in restrictions)
+                        {
+                            Console.WriteLine("  - " + code);
+                        }
+                        Console.WriteLine("  - The format is " + ((format_id < 5) ? "NOT " : "") + "FLAC");
+                        Console.WriteLine((isSample == 1) ? "  - The file is a sample" : "  - The file is (probaly) not a sample");
+                        //Console.WriteLine("No success via account '" + QabuzeAPI.Config.getInstance().accounts[credIndex].getName() + "'...");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Got the link via account '" + QabuzeAPI.Config.getInstance().accounts[credIndex].getName() + "'...");
+
+                        #if DEBUG
+                        Console.WriteLine((string)obj["url"]);
+                        #endif
+
+                        return (string)obj["url"];
+                    }
                 }
-                else
-                {
-                    return (string)obj["url"];
-                }
+                return null;
             }
             catch (Exception) {
                 return null;
@@ -479,7 +534,15 @@ namespace Qabuze
 
             List<KeyValuePair<string, string>> data = new List<KeyValuePair<string, string>>();
             data.Add(new KeyValuePair<string, string>("artist_id", id));
-            return (QabuzeArtist)QabuzeAPI.PerformRequest(QabuzeAPI.instance.BuildRequest("artist/get", data));
+            for (int credIndex = 0; credIndex < QabuzeAPI.Config.getInstance().accounts.Count; credIndex++)
+            {
+                QabuzeArtist tmp = (QabuzeArtist)QabuzeAPI.PerformRequest(QabuzeAPI.instance.BuildRequest("artist/get", data, false, credIndex));
+                if (tmp != null)
+                {
+                    return tmp;
+                }
+            }
+            return null;
         }
 
     }
@@ -500,7 +563,15 @@ namespace Qabuze
 
             List<KeyValuePair<string, string>> data = new List<KeyValuePair<string, string>>();
             data.Add(new KeyValuePair<string,string>("album_id", id));
-            return (QabuzeAlbum) QabuzeAPI.PerformRequest(QabuzeAPI.instance.BuildRequest("album/get", data));
+            for (int credIndex = 0; credIndex < QabuzeAPI.Config.getInstance().accounts.Count; credIndex++)
+            {
+                QabuzeAlbum tmp = (QabuzeAlbum)QabuzeAPI.PerformRequest(QabuzeAPI.instance.BuildRequest("album/get", data, false, credIndex));
+                if (tmp != null)
+                {
+                    return tmp;
+                }
+            }
+            return null;
         }
 
         public static QabuzeAlbum queryAlbum(string id)
