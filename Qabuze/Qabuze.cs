@@ -209,8 +209,8 @@ namespace Qabuze
 
                 #if DEBUG
                 Console.WriteLine(obj.ToString());
-                System.IO.File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\qabuze.json", obj.ToString());
                 #endif
+                System.IO.File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\qabuze.json", obj.ToString());
 
             } catch (Exception) {
                 Console.WriteLine("Configfile invalid!");
