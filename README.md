@@ -62,3 +62,6 @@ For license and disclaimer, please refer to [LICENSE.md](https://github.com/butt
 
 
 * *Only necessary/possible with download-enabled version*
+
+---
+[This software uses a modified fork of taglib-sharp.](https://github.com/JohnThomson/taglib-sharp/commit/cd3568a94bbd20b2363e68e0e5d242d6dc7c6a3a)

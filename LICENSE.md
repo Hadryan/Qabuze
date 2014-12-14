@@ -17,7 +17,7 @@ I am **not** responsible if you choose to use the predefined API-Credentials, wh
 The settings-menu is intended to save your own API-Credentials.
 Furthermore, you may **ONLY** compile/use the version with the download ability *(define WITHDOWNLOAD)*, where not punishable by applicable laws and at **solely** your own risk!
 
-If you intend to compile/use the download-version, you need to place a metaflac Flac-file tagger [(download here)](https://xiph.org/flac/download.html) into the root of the containing directory with a filename called "metaflac.exe".
+~~~If you intend to compile/use the download-version, you need to place a metaflac Flac-file tagger [(download here)](https://xiph.org/flac/download.html) into the root of the containing directory with a filename called "metaflac.exe".~~~ No longer needed. i Implemented taglib-sharp, which handles tagging as of now :)
 
 
 ---
@@ -105,6 +105,9 @@ If you intend to compile/use the download-version, you need to place a metaflac 
         liability, whether in contract, strict liability, or tort (including
         negligence or otherwise) arising in any way out of the use of this
         software, even if advised of the possibility of such damage.
+
+   - [taglib-sharp (modified fork)](https://github.com/JohnThomson/taglib-sharp/commit/cd3568a94bbd20b2363e68e0e5d242d6dc7c6a3a):
+       Licensed unter LGPL 2.1. See [here](https://github.com/butterkekstorte/Qabuze/tree/master/taglib-sharp/COPYING)
 
 ---
 *GPL v3*

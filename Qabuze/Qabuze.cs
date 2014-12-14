@@ -16,7 +16,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+
 using System;
+using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
 using System.Collections.Specialized;
@@ -32,8 +34,6 @@ using System.Diagnostics;
 
 namespace Qabuze
 {
-
-
     public class QabuzeAPI
     {
 
@@ -45,6 +45,7 @@ namespace Qabuze
                 if (Config.instance == null) {
                     Config.instance = new Config();
                 }
+                    
                 return Config.instance;
             }
 
@@ -217,12 +218,12 @@ namespace Qabuze
                 Console.WriteLine(obj.ToString());
             }
             instance = this;
-            #if WITHDOWNLOAD
+            /*#if WITHDOWNLOAD
             if (!System.IO.File.Exists("metaflac.exe"))
             {
                 MessageBox.Show("Metaflac could not be found. Files will NOT be tagged!", "Metaflac not found");
             }
-            #endif
+            #endif*/
         }
 
         public static Object PerformRequest(string url) {

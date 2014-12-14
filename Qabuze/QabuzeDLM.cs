@@ -233,7 +233,20 @@ namespace Qabuze
                         pushStatus(currentThread, DLMEvent.working, e.InnerException + "\n------\n" + e.Message, i + 1);
                         pushStatus(currentThread, DLMEvent.loaded, "Downloading \"" + filename + "\" failed!", i + 1);
                     }
-                    Process proc = new Process
+
+                    TagLib.File tlFile = TagLib.Flac.File.Create(fullFilename);
+                    tlFile.Tag.Comment = "Created by Qabuze v" + typeof(frmMain).Assembly.GetName().Version;
+                    tlFile.Tag.Performers = new String[]{kvp_song.Value.artist};
+                    tlFile.Tag.Title = kvp_song.Value.title;
+                    tlFile.Tag.Album = kvp_song.Value.album;
+                    tlFile.Tag.Genres = new String[]{kvp_song.Value.genre};
+                    tlFile.Tag.Track = (uint)kvp_song.Value.track_number;
+                    tlFile.Tag.TrackCount = (uint)album.track_count;
+                    tlFile.Tag.Disc = (uint)kvp_song.Value.media_number;
+                    tlFile.Tag.AlbumArtists = new String[] { album.artist };
+                    tlFile.Tag.Pictures = new TagLib.IPicture[]{new TagLib.Picture(foldername + @"\folder.jpg")}; 
+#region old stuff
+                    /*Process proc = new Process
                     {
                         StartInfo = new ProcessStartInfo
                         {
@@ -286,21 +299,17 @@ namespace Qabuze
                         }
 
                     } while (mayContinue);
+                    */
+#endregion
                     try
                     {
-                        if (proc.ExitCode == 0)
-                        {
-                            pushStatus(currentThread, DLMEvent.tagged, "Tagging \"" + filename + "\" done!", i + 1);
-                            pushStatus(currentThread, DLMEvent.done, "Done with \"" + filename + "\"!", i + 1);
-                        }
-                        else
-                        {
-                            pushStatus(currentThread, DLMEvent.taggingFailed, "Tagging \"" + filename + "\" FAILED!", i + 1);
-                        }
+                        tlFile.Save();
+                        pushStatus(currentThread, DLMEvent.tagged, "Tagging \"" + filename + "\" done!", i + 1);
+                        pushStatus(currentThread, DLMEvent.done, "Done with \"" + filename + "\"!", i + 1);
                     }
                     catch (Exception)
                     {
-                       //If it has to be cached because of proc.ExitCode it already was marked as failed previously. Just catch to prevent a crash.
+                        pushStatus(currentThread, DLMEvent.taggingFailed, "Tagging \"" + filename + "\" FAILED!", i + 1);
                     }
 
                     //pb.Increment(1);
