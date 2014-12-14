@@ -25,7 +25,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.Net;
 using System.Threading;
-using System.Windows.Shell;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
